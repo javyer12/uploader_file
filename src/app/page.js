@@ -7,13 +7,15 @@ export default function Home() {
   const [ succ, setSucc ] = useState(false);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[ 0 ])
+    if (!e.target.files?.[ 0 ]) return;
+    setFile(e.target.files?.[ 0 ]);
   }
   const handleSubmitFile = async (e) => {
     // sirve para no recargar la pagina
     e.preventDefault();
 
     if (!file) return confirm("You forgot picking a file");
+
     try {
       const formFile = new FormData();
       formFile.set('file', file);
@@ -22,14 +24,13 @@ export default function Home() {
         method: "POST",
         body: formFile
       });
+
       if (res.ok) {
         confirm("File uploaded successfully");
         setSucc(true);
       }
-      const data = await res.json();
-      // data.then((datum) => console.log(datum));
     } catch (e) {
-      console.log(e.message);
+      console.error(e.message);
     }
   }
   return (
@@ -60,7 +61,7 @@ export default function Home() {
       {succ && (
         <a type="button" href="./files.js" onClick={() => {
           setSucc(false)
-        }} className="flex anchor mb-5 m-auto p-3 w-auto  justify-center bg-transparent border border-double rounded hover:bg-black "
+        }} className="flex anchor mb-5 m-auto p-3 w-44 justify-center bg-transparent border border-double rounded hover:bg-black "
         >
           Watch Files
         </a>)}

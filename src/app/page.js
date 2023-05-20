@@ -1,95 +1,70 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+import React, { useState } from "react";
+import './globals.css';
 
 export default function Home() {
+  const [ file, setFile ] = useState();
+  const [ succ, setSucc ] = useState(false);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[ 0 ])
+  }
+  const handleSubmitFile = async (e) => {
+    // sirve para no recargar la pagina
+    e.preventDefault();
+
+    if (!file) return confirm("You forgot picking a file");
+    try {
+      const formFile = new FormData();
+      formFile.set('file', file);
+      //api/upload = es el backend || here the image is sent to the server
+      const res = await fetch('/api/upload', {
+        method: "POST",
+        body: formFile
+      });
+      if (res.ok) {
+        confirm("File uploaded successfully");
+        setSucc(true);
+      }
+      const data = await res.json();
+      // data.then((datum) => console.log(datum));
+    } catch (e) {
+      console.log(e.message);
+    }
+  }
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+    <nav className="main ">
+      <h2 className="text-center from-slate-900 text-4xl mt-2 ">KGS Vogue...</h2>
+      <nav className=" flex m-7 justify-center items-center ">
+        <section className="m-9 p-5 bg-zinc-950 shadow-lg shadow-black ">
+          <h1 className="text-center m-5 text-3xl main_text">Upload Your Favorites Images</h1>
+          <form onSubmit={handleSubmitFile}>
+            <input type="file"
+              className="bg-zinc-900 text-zinc-200 p-2 rounded block mb-2"
+              onChange={handleFileChange}
             />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+            <button
+              type="submit"
+              className="w-full mt-3 p-3 bg-transparent border border-double rounded block disabled:opacity-50 hover:bg-lime-600"
+              disabled={!file}
+            >
+              Upload File
+            </button>
+          </form>
+          {file && (<img src={URL.createObjectURL(file)}
+            alt="this is an image uploaded by user"
+            className="w-full h-64 object-cover p-5 ps-0 m-4 mx-auto"
+          />)}
+        </section>
+      </nav>
+      {succ && (
+        <a type="button" href="./files.js" onClick={() => {
+          setSucc(false)
+        }} className="flex anchor mb-5 m-auto p-3 w-auto  justify-center bg-transparent border border-double rounded hover:bg-black "
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+          Watch Files
+        </a>)}
+    </nav>
   )
 }
+// AGREGAR libreria para aceptar arrastrar y soltar archivos 

@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 
 export async function PUT(request) {
+
     const data = await request.formData();
     const file = data.get('file');
     if (!file) {
@@ -18,5 +19,5 @@ export async function PUT(request) {
     //y segundo, el buffer "el valor del archivo"
     writeFile(pathFile, buffer);
     console.log("File uploaded to " + pathFile);
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true });
 }

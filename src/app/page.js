@@ -20,7 +20,7 @@ export default function Home() {
       const formFile = new FormData();
       formFile.set('file', file);
       //api/upload = es el backend || here the image is sent to the server
-      const res = await fetch('./api/upload', {
+      const res = await fetch('/api/upload', {
         method: 'PUT',
         body: formFile,
         mode: 'cors',
